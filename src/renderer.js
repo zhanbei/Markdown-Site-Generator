@@ -9,7 +9,7 @@ const renderer = new marked.Renderer();
 // @see https://marked.js.org/#/USING_PRO.md#renderer
 renderer.heading = (text, level) => {
 	const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
-	return `<h${level} id="${escapedText}"><a class="anchor" href="#${escapedText}"><span class="header-link"/></a>${text}</h${level}>`;
+	return `<h${level} id="${escapedText}"><a class="anchor" href="#${escapedText}"><span class="header-link"></span></a>${text}</h${level}>`;
 };
 
 // Get tokens from markdown.
