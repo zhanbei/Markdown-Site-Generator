@@ -19,6 +19,12 @@ try {
 	}
 }
 
+if (!configs.inputDir || !configs.outputDir || !configs.mdPageTemplate) {
+	console.error('Invalid configs:', configs);
+	console.error('You may check out https://github.com/zhanbei/Markdown-Site-Generator for help!');
+	process.exit(1);
+}
+
 console.log('Resolved configs:', configs);
 const app = new App(configs);
 app.statAndRender();
