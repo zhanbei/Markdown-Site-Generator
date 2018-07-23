@@ -1,7 +1,7 @@
-'use strict';
+#!/usr/bin/env node
 
 const path = require('path');
-const App = require('./src/app');
+const App = require('../src/app');
 const configsModule = '.site_configs';
 
 const targetDir = process.argv[2];

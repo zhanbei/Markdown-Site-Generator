@@ -6,6 +6,9 @@
     "Static-Site-Generator"
   ],
   "main": "index.js",
+  "bin": {
+    "generate-md-site": "./bin/generate-md-site.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
