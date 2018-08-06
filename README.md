@@ -16,6 +16,10 @@ cd Markdown-Site-Generator
 sudo npm install -g .
 ```
 
+## Get Started
+
+You may check out the [instructions to start a brand new blog site](https://github.com/zhanbei/.markdown-site-configs#start-a-brand-new-blog) with the [github flavored markdown](https://github.github.com/gfm/) supported.
+
 ## Usage
 
 After installation, you will get a `generate-md-site` command available. Create a file `.site_configs/index.js` in your markdown-based site and export an object to configure the site generator. Then you can run `generate-md-site .` to generate your  website.
