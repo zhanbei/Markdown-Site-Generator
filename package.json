@@ -1,0 +1,22 @@
+{
+  "name": "markdown-site-generator",
+  "version": "0.8.0",
+  "description": "A markdown site generator which generates static sites, supporting the *no-trailing-slash* mode of sites, and can be used for generating a blogs site.",
+  "keywords": [
+    "Static-Site-Generator"
+  ],
+  "main": "index.js",
+  "bin": {
+    "generate-md-site": "./bin/generate-md-site.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Fisher",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "highlight.js": "^9.12.0",
+    "marked": "^0.4.0"
+  }
+}
