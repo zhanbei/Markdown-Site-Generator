@@ -1,6 +1,6 @@
 {
   "name": "markdown-site-generator",
-  "version": "0.9.0",
+  "version": "0.8.0",
   "description": "A markdown site generator which generates static sites, supporting the *no-trailing-slash* mode of sites, and can be used for generating a blogs site.",
   "keywords": [
     "Static-Site-Generator"
