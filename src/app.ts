@@ -2,6 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import * as renderer from './renderer';
 import FsNode from './fs-node';
 import FolderNode from './folder-node';
 
@@ -14,6 +15,7 @@ export class Configs {
 	public assetsDir: string;
 	public nameFilters: string[];
 	public nameConverter: (name: string, node: object) => string;
+	public anchorConverter: (name: string) => string;
 	public trailingSlash: boolean;
 	public noTrailingSlash: boolean;
 	// List files above folders, if true.
@@ -73,7 +75,7 @@ export class App {
 		const {
 			title,
 			assetsDir, inputDir, outputDir, mdPageTemplate, mdListTemplate,
-			nameFilters, nameConverter,
+			nameFilters, nameConverter, anchorConverter,
 			trailingSlash, noTrailingSlash,
 			listFilesAboveFolders,
 		} = configs;
@@ -89,6 +91,7 @@ export class App {
 
 		this.nameFilters = nameFilters;
 		this.nameConverter = nameConverter;
+		if (anchorConverter) {renderer.configs.anchorConverter = anchorConverter;}
 
 		this.trailingSlash = trailingSlash;
 		this.noTrailingSlash = noTrailingSlash;
