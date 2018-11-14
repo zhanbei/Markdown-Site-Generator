@@ -13,12 +13,12 @@ renderer.heading = (text, level) => {
 };
 
 // Get tokens from markdown.
-exports.lexer = (md) => {
+export const lexer = (md) => {
 	return marked.lexer(md);
 };
 
 // Get the text in the first-level header.
-exports.getHeadingFromTokens = (tokens) => {
+export const getHeadingFromTokens = (tokens) => {
 	if (!tokens || tokens.length <= 0) {return '';}
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
@@ -29,7 +29,7 @@ exports.getHeadingFromTokens = (tokens) => {
 };
 
 // Render tokens to html.
-exports.parserTokens = (tokens) => {
+export const parserTokens = (tokens) => {
 	return marked.parser(tokens, Object.assign(marked.getDefaults(), {
 		renderer: renderer,
 		highlight: (code) => highlighter.highlightAuto(code).value,

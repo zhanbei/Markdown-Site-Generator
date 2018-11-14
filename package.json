@@ -10,13 +10,17 @@
     "generate-md-site": "./bin/generate-md-site.js"
   },
   "scripts": {
+    "build-ts": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Fisher",
-  "license": "ISC",
   "dependencies": {
     "ejs": "^2.6.1",
     "highlight.js": "^9.12.0",
     "marked": "^0.4.0"
-  }
+  },
+  "devDependencies": {
+    "@types/node": "^10.12.6"
+  },
+  "author": "Fisher",
+  "license": "ISC"
 }

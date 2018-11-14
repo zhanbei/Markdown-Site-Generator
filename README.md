@@ -4,6 +4,16 @@
 
 A markdown site generator which generates static sites, supporting the *no-trailing-slash* mode of sites, and can be used for generating a blogs site.
 
+## TO DO
+
+- [ ] Copy static assets to generated site with cache.
+- [ ] Generate default configs on initialize.
+- [ ] Update documents of usage of configs.
+- [ ] Fix the conflict between HTML base and anchor.
+- [ ] Parse markdown document metadata.
+- [ ] Parse folder/index.json metadata.
+- [ ] Fix non-character anchors.
+
 ## Installation
 
 Currently you can clone this repository and run `npm install . --global` inside the root folder.
@@ -62,3 +72,67 @@ module.exports = {
 	folderIndexConversion: true,
 };
 ```
+
+## Modes of the Markdown Site Generator
+
+- **The Default Mode**:
+By default, every markdown file is rendered directly to the corresponding HTML file.
+- **Trailing Slash Mode(No Ending Dot HTML)**:
+This mode abandons the ending *.html* and prefers a trailing slash in the URL.
+- **No Trailing Slash Mode**:
+In this mode, site generated and hosted in the *no trailing slash* has no trailing slash in the URL.
+
+## (Blog) Site Structure
+
+The site structure of your original content and the generated.
+
+- (Markdown) **Demo Site**
+	- Index.md
+	- README.md
+	- Test-File.md
+	- Test-Folder.md
+	- Test-Folder
+		- Index.md
+		- Test-Folder.md
+		- Test-File.md
+		- Test-File.any
+- Rendering by **Default** and Host Normally
+	- index.html `/`
+	- readme.html `/readme.html`
+	- test-file.html `/test-file.html`
+	- test-folder.html `/test-folder.html`
+	- test-folder
+		- index.html `/test-folder/`
+		- test-folder.html `/test-folder/test-folder.html`
+		- test-file.html `/test-file.html`
+		- test-file.any `/test-file.any`
+- Rendering in the **Trailing Slash Mode** and Host Normally
+	- index.html `/`
+	- readme
+		- index.html `/readme/`
+	- test-file
+		- index.html `/test-file/`
+	- test-folder
+		- index.html `/test-folder/`
+		- test-folder
+			- index.html `/test-folder/test-folder/`
+		- test-file
+			- index.html `/test-file/`
+		- test-file.any `/test-file.any`
+- Rendering in the **No Trailing Slash Mode** and Host in the *No Trailing Slash Mode*
+	- index.html `/`
+	- readme
+		- readme.html `/readme`
+	- test-file
+		- test-file.html `/test-file`
+	- test-folder
+		- test-folder.html `/test-folder`
+			- the original `test-folder/test-folder.md` is rendered prior to the `test-folder/index.md`.
+		- test-file
+			- test-file.html `/test-folder/test-file`
+		- test-file.any `/test-folder/test-file.any`
+
+## References
+
+- [Hugo support for URLs without a trailing slash?](https://discourse.gohugo.io/t/hugo-support-for-urls-without-a-trailing-slash/6763) -
+discourse.gohugo.io
