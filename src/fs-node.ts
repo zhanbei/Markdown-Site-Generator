@@ -5,22 +5,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import App from './app';
 
-export class EjsEnv {
-	public node: DocumentNode;
-	public nodes: DocumentNode[];
-	public configs: App;
-
-	// The rendered content.
-	public html: string;
-
-	constructor(configs, node) {
-		this.configs = configs;
-		this.node = node;
-	}
-}
-
 // A markdown or regular file.
-export class DocumentNode {
+export class FsNode {
 	public configs: App;
 	public depth: number;
 
@@ -59,9 +45,9 @@ export class DocumentNode {
 		this.fromFileLocation = path.join(folder.fromFileLocation, fileName);
 		this.fromFolderName = folder.fromFileName;
 
-		this.toFileName = configs.mNameConverter ? configs.mNameConverter(this.fromFileName, this) : this.fromFileName.toLowerCase();
+		this.toFileName = configs.nameConverter ? configs.nameConverter(this.fromFileName, this) : this.fromFileName.toLowerCase();
 		this.toFilePath = path.join(folder.toFilePath, this.toFileName);
 	}
 }
 
-export default DocumentNode;
+export default FsNode;

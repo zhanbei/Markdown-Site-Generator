@@ -7,10 +7,11 @@ import * as constants from './constants';
 import * as utils from './utils';
 import * as renderer from './renderer';
 import App from './app';
-import DocumentNode, {EjsEnv} from './document-node';
+import FsNode from './fs-node';
 import FolderNode from './folder-node';
+import EjsEnv from './ejs-env';
 
-export class FileNode extends DocumentNode {
+export class FileNode extends FsNode {
 
 	// Valid only for a regular file.
 	public fromFilePlainName: string;
@@ -42,7 +43,7 @@ export class FileNode extends DocumentNode {
 		this.isMarkdownFile = utils.isMarkdownFile(this.fromFileExtension);
 
 		if (this.isHtmlFile) {
-			configs.mCounterHtmlFiles.push(this);
+			configs.counterHtmlFiles.push(this);
 			// Ignoring the HTML files.
 			return;
 		}
@@ -56,17 +57,17 @@ export class FileNode extends DocumentNode {
 
 		switch (this.toFilePlainName) {
 			case constants.INDEX:
-				configs.mCounterTestFileIndexFiles.push(this);
+				configs.counterTestFileIndexFiles.push(this);
 				break;
 			case folder.toFileName:
-				configs.mCounterTestFileTestFileFiles.push(this);
+				configs.counterTestFileTestFileFiles.push(this);
 				break;
 			default:
-				configs.mCounterTestFolderTestFileFiles.push(this);
+				configs.counterTestFolderTestFileFiles.push(this);
 				break;
 		}
 
-		if (configs.mNoTrailingSlash) {
+		if (configs.noTrailingSlash) {
 			// Case 1. Rendering in the no trailing slash mode.
 			this.toFileName = this.toFilePlainName + constants.DOT_HTML;
 			this.toFilePath = path.join(folder.toFilePath, this.toFileName);
@@ -77,7 +78,7 @@ export class FileNode extends DocumentNode {
 				// case constants.README:
 				case constants.INDEX:
 					// Set the folder page if not set yet.
-					if (!folder.pageDocumentNode) {folder.setFolderPage(this);}
+					if (!folder.page) {folder.setFolderPage(this);}
 					break;
 				default:
 					// Create a folder to store the html in the no-trailing-slash mode.
@@ -88,7 +89,7 @@ export class FileNode extends DocumentNode {
 			}
 			return;
 		}
-		if (configs.mTrailingSlash) {
+		if (configs.trailingSlash) {
 			// Case 2. Rendering in the trailing slash mode.
 			if (this.toFilePlainName === constants.INDEX) {
 				this.toFileName = this.toFilePlainName + constants.DOT_HTML;
@@ -124,7 +125,7 @@ export class FileNode extends DocumentNode {
 
 	render() {
 		const configs = this.configs;
-		const output = configs.mOutputDirLocation;
+		const output = configs.outputDirLocation;
 		if (!this.isFile) {return console.error('FATAL Found ignored file of the unknown file type:', JSON.stringify(this));}
 		if (this.isHtmlFile) {return console.log('FATAL Found ignored file:', this.fromFilePath);}
 		if (!this.isMarkdownFile) {
@@ -152,7 +153,7 @@ export class FileNode extends DocumentNode {
 
 		const env = new EjsEnv(configs, this);
 		env.html = html;
-		fs.writeFileSync(toFileLocation, ejs.render(configs.mMdPageTemplate, env));
+		fs.writeFileSync(toFileLocation, ejs.render(configs.mdPageTemplate, env));
 		// console.warn('Rendered file:', this.fromFileLocation, '-->>', toFileLocation);
 
 		if (this.toFolderPath) {
@@ -163,3 +164,5 @@ export class FileNode extends DocumentNode {
 	}
 }
 
+
+export default FileNode;
