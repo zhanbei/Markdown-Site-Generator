@@ -4,6 +4,16 @@
 
 A markdown site generator which generates static sites, supporting the *no-trailing-slash* mode of sites, and can be used for generating a blogs site.
 
+## TO DO
+
+- [ ] Copy static assets to generated site with cache.
+- [ ] Generate default configs on initialize.
+- [ ] Update documents of usage of configs.
+- [ ] Fix the conflict between HTML base and anchor.
+- [ ] Parse markdown document metadata.
+- [ ] Parse folder/index.json metadata.
+- [ ] Fix non-character anchors.
+
 ## Installation
 
 Currently you can clone this repository and run `npm install . --global` inside the root folder.
