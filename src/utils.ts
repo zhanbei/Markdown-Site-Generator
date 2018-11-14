@@ -12,6 +12,8 @@ export const filterFileName = (filters, fileName) => {
 	return fileName.startsWith('.') || fileName.startsWith('_');
 };
 
+export const getFilePlainName = (fileName) => fileName.substr(0, fileName.lastIndexOf('.'));
+
 const htmlFileExtensions = ['.html', '.htm'];
 const markdownFileExtensions = ['.md', '.markdown'];
 

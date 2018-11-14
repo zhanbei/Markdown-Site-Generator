@@ -2,7 +2,8 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import DocumentNode from './node';
+import DocumentNode from './document-node';
+import FolderNode from './folder-node';
 
 export class Configs {
 	public title: string;
@@ -15,6 +16,8 @@ export class Configs {
 	public nameConverter: (name: string, node: object) => string;
 	public trailingSlash: boolean;
 	public noTrailingSlash: boolean;
+	// List files above folders, if true.
+	public listFilesAboveFolders: boolean;
 
 	constructor(title) {
 		this.title = title;
@@ -37,6 +40,8 @@ export class App {
 
 	public mTrailingSlash: boolean = false;
 	public mNoTrailingSlash: boolean = false;
+
+	public mListFilesAboveFolders: boolean;
 
 	// public mMdPageTemplateLocation: string;
 	public mMdPageTemplate: string;
@@ -73,6 +78,7 @@ export class App {
 			assetsDir, inputDir, outputDir, mdPageTemplate, mdListTemplate,
 			nameFilters, nameConverter,
 			trailingSlash, noTrailingSlash,
+			listFilesAboveFolders,
 		} = configs;
 
 		this.title = title;
@@ -92,6 +98,8 @@ export class App {
 		this.mTrailingSlash = trailingSlash;
 		this.mNoTrailingSlash = noTrailingSlash;
 
+		this.mListFilesAboveFolders = listFilesAboveFolders;
+
 		console.log();
 		const mode = noTrailingSlash ? 'no-trailing-slash' : trailingSlash ? 'trailing-slash' : 'regular';
 		console.log(`Resolved markdown site titled "${title}" in the "${mode}" mode.`);
@@ -110,7 +118,7 @@ export class App {
 
 	statAndRender() {
 		console.log();
-		const mdSite = DocumentNode.NewInstance(this);
+		const mdSite = FolderNode.NewInstance(this);
 		console.log();
 		this.logRareNodes('Found %d valid folders:', this.mCounterValidFolders);
 		this.logRareNodes('Found and ignored %d empty folders:', this.mCounterEmptyFolders);
