@@ -5,6 +5,7 @@ import path = require('path');
 import renderer = require('./renderer');
 import FsNode from './fs-node';
 import FolderNode from './folder-node';
+import GenerateMdSite = require('./generate-md-site');
 
 export class Configs {
 	public title: string;
@@ -38,6 +39,7 @@ export class Configs {
 
 export class App {
 	public mConfigs: object;
+	public commandMdSiteGenerator: GenerateMdSite;
 
 	public title: string;
 
