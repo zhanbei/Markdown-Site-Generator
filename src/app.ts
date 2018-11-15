@@ -1,9 +1,11 @@
 'use strict';
 
-import * as fs from 'fs';
-import * as path from 'path';
+import fs = require('fs');
+import path = require('path');
+import renderer = require('./renderer');
 import FsNode from './fs-node';
 import FolderNode from './folder-node';
+import GenerateMdSite = require('./generate-md-site');
 
 export class Configs {
 	public title: string;
@@ -14,10 +16,21 @@ export class Configs {
 	public assetsDir: string;
 	public nameFilters: string[];
 	public nameConverter: (name: string, node: object) => string;
+	public anchorConverter: (name: string) => string;
 	public trailingSlash: boolean;
 	public noTrailingSlash: boolean;
 	// List files above folders, if true.
 	public listFilesAboveFolders: boolean;
+
+	// Print the resolved site structure.
+	public print: boolean;
+	// Build markdown site without writing to disk.
+	public noWriting: boolean;
+
+	// The verbose mode, rich output, if true.
+	public verbose: boolean;
+	// The silent mode, no output, if true.
+	public silent: boolean;
 
 	constructor(title) {
 		this.title = title;
@@ -26,6 +39,7 @@ export class Configs {
 
 export class App {
 	public mConfigs: object;
+	public commandMdSiteGenerator: GenerateMdSite;
 
 	public title: string;
 
@@ -43,6 +57,12 @@ export class App {
 
 	public mdPageTemplate: string;
 	public mdListTemplate: string;
+
+	public isPrinting: boolean;
+	public noWriting: boolean;
+
+	public isVerbose: boolean;
+	public isSilent: boolean;
 
 	public counterValidFolders: FsNode[] = [];
 	public counterEmptyFolders: FsNode[] = [];
@@ -73,9 +93,11 @@ export class App {
 		const {
 			title,
 			assetsDir, inputDir, outputDir, mdPageTemplate, mdListTemplate,
-			nameFilters, nameConverter,
+			nameFilters, nameConverter, anchorConverter,
 			trailingSlash, noTrailingSlash,
 			listFilesAboveFolders,
+			print, noWriting,
+			verbose, silent,
 		} = configs;
 
 		this.title = title;
@@ -89,13 +111,18 @@ export class App {
 
 		this.nameFilters = nameFilters;
 		this.nameConverter = nameConverter;
+		if (anchorConverter) {renderer.configs.anchorConverter = anchorConverter;}
 
 		this.trailingSlash = trailingSlash;
 		this.noTrailingSlash = noTrailingSlash;
 
 		this.listFilesAboveFolders = listFilesAboveFolders;
 
-		console.log();
+		this.isPrinting = print;
+		this.noWriting = noWriting;
+		this.isVerbose = verbose;
+		this.isSilent = silent;
+
 		const mode = noTrailingSlash ? 'no-trailing-slash' : trailingSlash ? 'trailing-slash' : 'regular';
 		console.log(`Resolved markdown site titled "${title}" in the "${mode}" mode.`);
 		console.log(`Resolved input: "${this.inputDirLocation}" and output: "${this.outputDirLocation}".`);
@@ -139,11 +166,17 @@ export class App {
 			console.log();
 		}
 
-		// console.log(`Resolved site from: "${mdSite.fromFileLocation}".`);
-		// mdSite.print();
-		// console.log();
+		if (this.isPrinting) {
+			console.log(`Resolved site from: "${mdSite.fromFileLocation}".`);
+			mdSite.print();
+			return;
+		}
 
-		console.log('Rendering:', mdSite.fromFileLocation);
+		if (this.noWriting) {
+			console.log('[FAKE] Rendering:', mdSite.fromFileLocation);
+		} else {
+			console.log('Rendering:', mdSite.fromFileLocation);
+		}
 		mdSite.render();
 		console.log();
 	}

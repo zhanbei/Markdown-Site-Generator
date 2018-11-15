@@ -1,10 +1,10 @@
 'use strict';
 
-import * as fs from 'fs';
-import * as path from 'path';
-import * as ejs from 'ejs';
-import * as constants from './constants';
-import * as utils from './utils';
+import fs = require('fs');
+import path = require('path');
+import ejs = require('ejs');
+import constants = require('./constants');
+import utils = require('./utils');
 import App from './app';
 import FsNode from './fs-node';
 import FileNode from './file-node';
@@ -131,7 +131,7 @@ export class FolderNode extends FsNode {
 		const configs = this.configs;
 
 		const output = configs.outputDirLocation;
-		const err = utils.mkdirIfNotExists(path.join(output, this.toFilePath));
+		const err = utils.mkdirIfNotExists(path.join(output, this.toFilePath), configs.noWriting, configs.isSilent);
 		if (err) {throw err;}
 		console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFilePath}`);
 
@@ -161,7 +161,7 @@ export class FolderNode extends FsNode {
 		this.title = this.fromFileName + ' - Collection';
 		const env = new EjsEnv(configs, this);
 		env.nodes = this.nodes;
-		fs.writeFileSync(toFolderPageLocation, ejs.render(configs.mdListTemplate, env));
+		if (!configs.noWriting) {fs.writeFileSync(toFolderPageLocation, ejs.render(configs.mdListTemplate, env));}
 		// console.warn('Rendered folder page using list template:', this.fromFileLocation, '-->>', toFolderPageLocation);
 	}
 }

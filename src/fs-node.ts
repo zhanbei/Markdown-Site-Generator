@@ -1,8 +1,8 @@
 'use strict';
 
 // The node for a folder or a md document.
-import * as fs from 'fs';
-import * as path from 'path';
+import fs = require('fs');
+import path = require('path');
 import App from './app';
 
 // A markdown or regular file.
