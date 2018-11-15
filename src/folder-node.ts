@@ -28,7 +28,7 @@ export class FolderNode extends FsNode {
 		const stats = fs.statSync(app.inputDirLocation);
 		if (!stats.isDirectory()) {throw new Error('target dir is not a dir.');}
 
-		const entrance = new FolderNode(app, 0, stats);
+		const entrance = new FolderNode(app, 0, null, stats);
 		// Use the title as the from folder name.
 		entrance.fromFileName = app.title;
 		entrance.fromFilePath = constants.DOT;
@@ -37,18 +37,19 @@ export class FolderNode extends FsNode {
 		entrance.toFileName = '';
 		entrance.toFilePath = constants.DOT;
 		entrance.setHref(constants.SLASH, constants.SLASH);
-		entrance.statFolder(null);
+		entrance.statFolder();
 		return entrance;
 	}
 
-	constructor(app: App, depth: number, stats: fs.Stats) {
-		super(app, depth, stats);
+	constructor(app: App, depth: number, parent: FolderNode, stats: fs.Stats) {
+		super(app, depth, parent, stats);
 		this.isDirectory = true;
 		this.isFile = false;
 	}
 
-	statFolder(parent: FolderNode) {
+	statFolder() {
 		const configs = this.configs;
+		const parent = this.parent;
 
 		if (configs.noTrailingSlash) {
 			// No trailing slash to be appended to the path for folders in the no-trailing-slash mode.
@@ -70,11 +71,11 @@ export class FolderNode extends FsNode {
 		this.fileNames.map(fileName => {
 			const stats = fs.statSync(path.join(this.fromFileLocation, fileName));
 			if (stats.isDirectory()) {
-				const child = new FolderNode(configs, this.depth + 1, stats);
-				child.initNode(this, fileName);
-				child.statFolder(this);
+				const child = new FolderNode(configs, this.depth + 1, this, stats);
+				child.initNode(fileName);
+				child.statFolder();
 			} else if (stats.isFile()) {
-				new FileNode(configs, this.depth + 1, stats).statFile(this, fileName);
+				new FileNode(configs, this.depth + 1, this, stats).statFile(fileName);
 			} else {
 				// Ignoring the unknown file type.
 				console.error('Unknown file type!');

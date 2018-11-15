@@ -5,11 +5,15 @@ import fs = require('fs');
 import path = require('path');
 import constants = require('./constants');
 import App from './app';
+import FolderNode from './folder-node';
 
 // A markdown or regular file.
 export class FsNode {
 	public configs: App;
 	public depth: number;
+
+	// The parent folder of the current node.
+	public parent: FolderNode;
 
 	// The Html Title.
 	public title: string;
@@ -35,16 +39,18 @@ export class FsNode {
 	public isFile: boolean;
 
 	// Create a file node or folder node.
-	constructor(app: App, depth: number, stats: fs.Stats) {
+	constructor(app: App, depth: number, parent: FolderNode, stats: fs.Stats) {
 		if (depth > app.maxDepth) {throw new Error('Max depth of folder exceeded!');}
+		this.parent = parent;
 		this.configs = app;
 		this.depth = depth;
 		this.stats = stats;
 	}
 
 	// fromFileName, fromFilePath, fromFileLocation, fromFolderName, toFileName, toFilePath
-	initNode(folder, fileName: string) {
+	initNode(fileName: string) {
 		const configs = this.configs;
+		const folder = this.parent;
 
 		this.fromFileName = fileName;
 		this.fromFilePath = path.join(folder.fromFilePath, fileName);

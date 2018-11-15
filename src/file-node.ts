@@ -27,17 +27,18 @@ export class FileNode extends FsNode {
 	public isHtmlFile: boolean;
 	public isMarkdownFile: boolean;
 
-	constructor(app: App, depth: number, stats: fs.Stats) {
-		super(app, depth, stats);
+	constructor(app: App, depth: number, folder: FolderNode, stats: fs.Stats) {
+		super(app, depth, folder, stats);
 		this.isDirectory = false;
 		this.isFile = true;
 	}
 
 	// Initialize the target file.
-	statFile(folder: FolderNode, fileName: string) {
+	statFile(fileName: string) {
 		const configs = this.configs;
+		const folder = this.parent;
 
-		this.initNode(folder, fileName);
+		this.initNode(fileName);
 
 		this.fromFilePlainName = utils.getFilePlainName(this.fromFileName);
 		this.fromFileExtension = path.extname(this.fromFileName);
