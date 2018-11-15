@@ -140,25 +140,36 @@ export class FileNode extends FsNode {
 	}
 
 	print() {
-		if (this.toFolderPath) {
-			console.log(`${constants.TAB.repeat(this.depth)}- /${path.basename(this.toFolderPath)}`);
-			console.log(`${constants.TAB.repeat(this.depth + 1)}- /${this.toFileName} <<-- ${this.fromFilePath}`);
-		} else {
-			console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFileName} <<-- ${this.fromFilePath}`);
-		}
+		if (!this.isMarkdownFile) {return this.logCopiedFile();}
+		this.logCreatedFolderIfAny();
+		this.logRenderedDocument();
+	}
+
+	logCreatedFolderIfAny() {
+		if (!this.toFolderPath) {return;}
+		console.log(`${constants.TAB.repeat(this.depth)}- /${path.basename(this.toFolderPath)}`);
+	}
+
+	logRenderedDocument() {
+		const tabs = constants.TAB.repeat(this.toFolderPath ? this.depth + 1 : this.depth);
+		console.log(`${tabs}- /${this.toFileName} <<-- ${this.fromFilePath}`);
+	}
+
+	logCopiedFile() {
+		console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFileName} <- ${this.fromFilePath}`);
 	}
 
 	render() {
 		const configs = this.configs;
 		const output = configs.outputDirLocation;
 		if (!this.isFile) {return console.error('FATAL Found ignored file of the unknown file type:', JSON.stringify(this));}
-		if (this.isHtmlFile) {return console.log('FATAL Found ignored file:', this.fromFilePath);}
+		if (this.isHtmlFile) {return console.error('FATAL Found ignored file:', this.fromFilePath);}
 		if (!this.isMarkdownFile) {
 			const toFileLocation = path.join(output, this.toFilePath);
 			// @see https://stackoverflow.com/questions/11293857/fastest-way-to-copy-file-in-node-js
 			if (!configs.noWriting) {fs.createReadStream(this.fromFileLocation).pipe(fs.createWriteStream(toFileLocation));}
 			// console.warn('Copied file:', this.fromFileLocation, '-->>', toFileLocation);
-			console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFileName} <- ${this.fromFilePath}`);
+			this.logCopiedFile();
 			return;
 		}
 
@@ -173,7 +184,7 @@ export class FileNode extends FsNode {
 		if (this.toFolderPath) {
 			const err = utils.mkdirIfNotExists(path.join(output, this.toFolderPath), configs.noWriting, configs.isSilent);
 			if (err) {throw err;}
-			console.log(`${constants.TAB.repeat(this.depth)}- /${path.basename(this.toFolderPath)}`);
+			this.logCreatedFolderIfAny();
 		}
 
 		const env = new EjsEnv(configs, this);
@@ -181,11 +192,7 @@ export class FileNode extends FsNode {
 		if (!configs.noWriting) {fs.writeFileSync(toFileLocation, ejs.render(configs.mdPageTemplate, env));}
 		// console.warn('Rendered file:', this.fromFileLocation, '-->>', toFileLocation);
 
-		if (this.toFolderPath) {
-			console.log(`${constants.TAB.repeat(this.depth + 1)}- /${this.toFileName} <<-- ${this.fromFilePath}`);
-		} else {
-			console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFileName} <<-- ${this.fromFilePath}`);
-		}
+		this.logRenderedDocument();
 	}
 }
 
