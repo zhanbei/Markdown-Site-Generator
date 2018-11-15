@@ -34,8 +34,9 @@ export class FolderNode extends FsNode {
 		entrance.fromFilePath = constants.DOT;
 		entrance.fromFileLocation = app.inputDirLocation;
 		entrance.fromFolderName = null;
-		entrance.toFileName = null;
+		entrance.toFileName = '';
 		entrance.toFilePath = constants.DOT;
+		entrance.setHref(constants.SLASH, constants.SLASH);
 		entrance.statFolder(null);
 		return entrance;
 	}
@@ -48,6 +49,13 @@ export class FolderNode extends FsNode {
 
 	statFolder(parent: FolderNode) {
 		const configs = this.configs;
+
+		if (configs.noTrailingSlash) {
+			// No trailing slash to be appended to the path for folders in the no-trailing-slash mode.
+			this.setHref(this.toFileName, this.toFilePath);
+		} else {
+			this.setHref(utils.addTrailingSlash(this.toFileName), utils.addTrailingSlash(this.toFilePath));
+		}
 
 		// Initialize this folder.
 		const fileNames = fs.readdirSync(this.fromFileLocation);

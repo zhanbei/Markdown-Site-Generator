@@ -17,8 +17,15 @@ export class Configs {
 	public nameFilters: string[];
 	public nameConverter: (name: string, node: object) => string;
 	public anchorConverter: (name: string) => string;
+
+	// Add a prefix of baseUrl to absolute href.
+	public baseUrl: string;
+	// Use the relative links as the value of `node.href` in the list page, if true.
+	public useRelativeLinks: boolean;
+
 	public trailingSlash: boolean;
 	public noTrailingSlash: boolean;
+
 	// List files above folders, if true.
 	public listFilesAboveFolders: boolean;
 
@@ -49,6 +56,9 @@ export class App {
 
 	public nameFilters: string[];
 	public nameConverter: (name: string, node: object) => string;
+
+	public baseUrl: string;
+	public useRelativeLinks: boolean;
 
 	public trailingSlash: boolean = false;
 	public noTrailingSlash: boolean = false;
@@ -94,6 +104,7 @@ export class App {
 			title,
 			assetsDir, inputDir, outputDir, mdPageTemplate, mdListTemplate,
 			nameFilters, nameConverter, anchorConverter,
+			baseUrl, useRelativeLinks,
 			trailingSlash, noTrailingSlash,
 			listFilesAboveFolders,
 			print, noWriting,
@@ -112,6 +123,9 @@ export class App {
 		this.nameFilters = nameFilters;
 		this.nameConverter = nameConverter;
 		if (anchorConverter) {renderer.configs.anchorConverter = anchorConverter;}
+
+		this.baseUrl = baseUrl;
+		this.useRelativeLinks = useRelativeLinks;
 
 		this.trailingSlash = trailingSlash;
 		this.noTrailingSlash = noTrailingSlash;

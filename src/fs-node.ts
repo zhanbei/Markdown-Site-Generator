@@ -3,6 +3,7 @@
 // The node for a folder or a md document.
 import fs = require('fs');
 import path = require('path');
+import constants = require('./constants');
 import App from './app';
 
 // A markdown or regular file.
@@ -23,6 +24,11 @@ export class FsNode {
 
 	public toFileName: string;
 	public toFilePath: string;
+
+	// The absolute or relative href of the node, following configs#useRelativeLinks.
+	public href: string;
+	public hrefAbsolute: string;
+	public hrefRelative: string;
 
 	public stats: fs.Stats;
 	public isDirectory: boolean;
@@ -47,6 +53,20 @@ export class FsNode {
 
 		this.toFileName = configs.nameConverter ? configs.nameConverter(this.fromFileName, this) : this.fromFileName.toLowerCase();
 		this.toFilePath = path.join(folder.toFilePath, this.toFileName);
+
+		this.setHref(this.toFileName, this.toFilePath);
+	}
+
+	// Set relative, absolute, and the default href in the site.
+	setHref(relative, absolute) {
+		const {baseUrl = '', useRelativeLinks} = this.configs;
+		this.hrefRelative = relative;
+		this.hrefAbsolute = path.join(constants.SLASH, baseUrl, absolute);
+		if (useRelativeLinks) {
+			this.href = this.hrefRelative;
+		} else {
+			this.href = this.hrefAbsolute;
+		}
 	}
 }
 

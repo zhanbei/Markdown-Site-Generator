@@ -1,5 +1,6 @@
 'use strict';
 
+export const SLASH = '/';
 export const TAB = '\t';
 export const README = 'readme';
 export const INDEX = 'index';
