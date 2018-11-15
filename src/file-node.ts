@@ -18,6 +18,9 @@ export class FileNode extends FsNode {
 	public fromFileExtension: string;
 
 	// The plain name without extension(md/html) of the output file to be rendered.
+	// The converted name(usually lower-cased name) of the #fromFilePlainName.
+	// It will be either the out file plain name, or a component(folder) of the out file path.
+	// FIX-ME(2018-11-16) Rename the property to: #convertedFromFilePlainName or something suitable.
 	public toFilePlainName: string;
 	// The folder to be created for a markdown document.
 	public toFolderPath: string;
@@ -91,15 +94,15 @@ export class FileNode extends FsNode {
 		}
 		if (configs.trailingSlash) {
 			// Case 2. Rendering in the trailing slash mode.
+			this.toFileName = constants.INDEX_DOT_HTML;
 			if (this.toFilePlainName === constants.INDEX) {
-				this.toFileName = this.toFilePlainName + constants.DOT_HTML;
 				this.toFilePath = path.join(folder.toFilePath, this.toFileName);
 				folder.setFolderPage(this);
 			} else {
 				// Create a folder to store the html in the trailing-slash mode.
 				this.toFolderPath = path.join(folder.toFilePath, this.toFilePlainName);
 				// Render the markdown document to index.html to add a trailing slash.
-				this.toFilePath = path.join(this.toFolderPath, constants.INDEX_DOT_HTML);
+				this.toFilePath = path.join(this.toFolderPath, this.toFileName);
 				folder.pushFile(this);
 			}
 			return;
