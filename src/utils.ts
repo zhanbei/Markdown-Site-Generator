@@ -22,15 +22,17 @@ export const isMarkdownFile = (ext) => markdownFileExtensions.includes(ext);
 
 // mkdir if not exists.
 // Return error if
-export const mkdirIfNotExists = (dir) => {
+export const mkdirIfNotExists = (dir, noWriting, silent) => {
 	try {
 		const stats = fs.statSync(dir);
-		if (!stats.isDirectory()) {
+		if (stats && !stats.isDirectory()) {
 			return new Error('The target file exists but is not a directory.');
 		}
 	} catch (ex) {
-		fs.mkdirSync(dir);
-		console.log('Created folder:', dir);
+		// Check the folder only if #noWriting.
+		if (!noWriting) {fs.mkdirSync(dir);}
+		// Print verbosely if not #silent.
+		if (!silent) {console.log('Created folder:', dir);}
 	}
 	return null;
 };

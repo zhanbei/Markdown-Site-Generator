@@ -21,6 +21,16 @@ export class Configs {
 	// List files above folders, if true.
 	public listFilesAboveFolders: boolean;
 
+	// Print the resolved site structure.
+	public print: boolean;
+	// Build markdown site without writing to disk.
+	public noWriting: boolean;
+
+	// The verbose mode, rich output, if true.
+	public verbose: boolean;
+	// The silent mode, no output, if true.
+	public silent: boolean;
+
 	constructor(title) {
 		this.title = title;
 	}
@@ -45,6 +55,12 @@ export class App {
 
 	public mdPageTemplate: string;
 	public mdListTemplate: string;
+
+	public isPrinting: boolean;
+	public noWriting: boolean;
+
+	public isVerbose: boolean;
+	public isSilent: boolean;
 
 	public counterValidFolders: FsNode[] = [];
 	public counterEmptyFolders: FsNode[] = [];
@@ -78,6 +94,8 @@ export class App {
 			nameFilters, nameConverter, anchorConverter,
 			trailingSlash, noTrailingSlash,
 			listFilesAboveFolders,
+			print, noWriting,
+			verbose, silent,
 		} = configs;
 
 		this.title = title;
@@ -98,7 +116,11 @@ export class App {
 
 		this.listFilesAboveFolders = listFilesAboveFolders;
 
-		console.log();
+		this.isPrinting = print;
+		this.noWriting = noWriting;
+		this.isVerbose = verbose;
+		this.isSilent = silent;
+
 		const mode = noTrailingSlash ? 'no-trailing-slash' : trailingSlash ? 'trailing-slash' : 'regular';
 		console.log(`Resolved markdown site titled "${title}" in the "${mode}" mode.`);
 		console.log(`Resolved input: "${this.inputDirLocation}" and output: "${this.outputDirLocation}".`);
@@ -142,11 +164,17 @@ export class App {
 			console.log();
 		}
 
-		// console.log(`Resolved site from: "${mdSite.fromFileLocation}".`);
-		// mdSite.print();
-		// console.log();
+		if (this.isPrinting) {
+			console.log(`Resolved site from: "${mdSite.fromFileLocation}".`);
+			mdSite.print();
+			return;
+		}
 
-		console.log('Rendering:', mdSite.fromFileLocation);
+		if (this.noWriting) {
+			console.log('[FAKE] Rendering:', mdSite.fromFileLocation);
+		} else {
+			console.log('Rendering:', mdSite.fromFileLocation);
+		}
 		mdSite.render();
 		console.log();
 	}

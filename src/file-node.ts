@@ -131,7 +131,7 @@ export class FileNode extends FsNode {
 		if (!this.isMarkdownFile) {
 			const toFileLocation = path.join(output, this.toFilePath);
 			// @see https://stackoverflow.com/questions/11293857/fastest-way-to-copy-file-in-node-js
-			fs.createReadStream(this.fromFileLocation).pipe(fs.createWriteStream(toFileLocation));
+			if (!configs.noWriting) {fs.createReadStream(this.fromFileLocation).pipe(fs.createWriteStream(toFileLocation));}
 			// console.warn('Copied file:', this.fromFileLocation, '-->>', toFileLocation);
 			console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFileName} <- ${this.fromFilePath}`);
 			return;
@@ -146,14 +146,14 @@ export class FileNode extends FsNode {
 		this.title = heading || this.fromFilePlainName || 'Unknown HTML Title';
 
 		if (this.toFolderPath) {
-			const err = utils.mkdirIfNotExists(path.join(output, this.toFolderPath));
+			const err = utils.mkdirIfNotExists(path.join(output, this.toFolderPath), configs.noWriting, configs.isSilent);
 			if (err) {throw err;}
 			console.log(`${constants.TAB.repeat(this.depth)}- /${path.basename(this.toFolderPath)}`);
 		}
 
 		const env = new EjsEnv(configs, this);
 		env.html = html;
-		fs.writeFileSync(toFileLocation, ejs.render(configs.mdPageTemplate, env));
+		if (!configs.noWriting) {fs.writeFileSync(toFileLocation, ejs.render(configs.mdPageTemplate, env));}
 		// console.warn('Rendered file:', this.fromFileLocation, '-->>', toFileLocation);
 
 		if (this.toFolderPath) {
