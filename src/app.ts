@@ -1,8 +1,8 @@
 'use strict';
 
-import * as fs from 'fs';
-import * as path from 'path';
-import * as renderer from './renderer';
+import fs = require('fs');
+import path = require('path');
+import renderer = require('./renderer');
 import FsNode from './fs-node';
 import FolderNode from './folder-node';
 

@@ -1,6 +1,6 @@
 'use strict';
 
-const fs = require('fs');
+import fs = require('fs');
 
 export const filterFileName = (filters, fileName) => {
 	for (let j = 0; j < filters.length; j++) {

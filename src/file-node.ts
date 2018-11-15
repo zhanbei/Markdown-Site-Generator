@@ -1,11 +1,11 @@
 'use strict';
 
-import * as fs from 'fs';
-import * as path from 'path';
-import * as ejs from 'ejs';
-import * as constants from './constants';
-import * as utils from './utils';
-import * as renderer from './renderer';
+import fs = require('fs');
+import path = require('path');
+import ejs = require('ejs');
+import constants = require('./constants');
+import utils = require('./utils');
+import renderer = require('./renderer');
 import App from './app';
 import FsNode from './fs-node';
 import FolderNode from './folder-node';

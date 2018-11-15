@@ -1,7 +1,7 @@
 'use strict';
 
-const marked = require('marked');
-const highlighter = require('highlight.js');
+import marked = require('marked');
+import highlighter = require('highlight.js');
 
 const renderer = new marked.Renderer();
 
