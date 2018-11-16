@@ -5,7 +5,7 @@ import path = require('path');
 import renderer = require('./renderer');
 import FsNode from './fs-node';
 import FolderNode from './folder-node';
-import GenerateMdSite = require('./generate-md-site');
+import GenerateMdSite = require('./cmd/generate-md-site');
 
 export class Configs {
 	public title: string;

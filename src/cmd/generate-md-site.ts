@@ -2,9 +2,9 @@
 
 import path = require('path');
 import {Command, flags} from '@oclif/command';
-import App from './app';
+import App from '../app';
 
-const _package = require('../package');
+const _package = require('../../package.json');
 const command = _package.oclif.bin;
 const documentation = `
 The *Markdown Site Generator* supports sites in the following three different modes:
