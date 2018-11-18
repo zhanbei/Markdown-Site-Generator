@@ -47,7 +47,7 @@ export const renderSiteConfigsIndexJs = (options: GivenSiteOptions) => {
 };
 
 // Copy folders.
-export const copyFolder = async (source, destination, options = constants.NCP_DEFAULT_OPTIONS) => new Promise((resolve, reject) => {
+export const copyFolder = (source, destination, options = constants.NCP_DEFAULT_OPTIONS) => new Promise((resolve, reject) => {
 	ncp(source, destination, options, (err) => {
 		if (err) {return reject(err);}
 		resolve();
