@@ -44,26 +44,32 @@ const promptAndInitializeSite = async (
 		}
 
 		// Notice for accepted user-given options.
-		await fmt.print('Awesome, ');
-		await fmt.printLoadingDots();
-		await fmt.println();
+		await fmt.println('Awesome!');
 		await fmt.println();
 
 		// Confirm to proceeding.
 		if (isTargetSiteDirExisted) {
-			await fmt.println(`will generate configs to the existed site: "${targetSiteDirLocation}" with the default templates.`);
+			await fmt.println(`Will generate configs to the existed site: "${targetSiteDirLocation}" with the default templates.`, time * 2);
 		} else {
-			await fmt.println(`will create a *new* markdown demo site to "${targetSiteDirLocation}" with the default templates.`);
+			await fmt.println(`Will create a *new* markdown demo site to "${targetSiteDirLocation}" with the default templates.`, time * 2);
 		}
+		await fmt.println();
+
+		// Loading.
+		await fmt.printLoadingDots();
+		await fmt.println();
 		await fmt.println();
 
 		if (!isTargetSiteDirExisted) {
 			// Copy blogs files of the sample site.
-			await fmt.println('will create a markdown sample site: ' + options.title);
+			// await fmt.println(`Will create a demo markdown site to "${targetSiteDir}" for you.`, time * 2);
+			await utils.copyDemoMarkdownSite(targetSiteDirLocation);
+			await fmt.println(`Copied a demo markdown site to "${targetSiteDir}" for you.`, time * 2);
+			await fmt.println();
 		}
 
-		// Creating folder for configures.
-		const err = utils.mkdirIfNotExists(targetConfigsDirLocation, false, false);
+		// Creating the not existed folder for configures.
+		const err = utils.makeNotExistedDir(targetConfigsDirLocation);
 		if (err) {
 			cmd.error(err);
 			cmd.exit(1);
@@ -80,15 +86,16 @@ const promptAndInitializeSite = async (
 		await fmt.println(`Generated configures file: "${givenTargetConfigsIndexJs}".`);
 		await fmt.println();
 
-		// TO-DO Copy github theme(modes and templates).
+		// Copy github theme(modes and templates).
+		// Throwing error ???
+		await utils.copySiteConfigsThemeGithub(targetConfigsDirLocation);
 
 		// Notice to use VCS.
 		await fmt.println(`You may add the site configures(${targetConfigsDir}) to Git(or other VCS) to track changes.`);
 		await fmt.println();
 
 		// Done all initializations.
-		await fmt.print(`Done, `);
-		await fmt.printLoadingDots();
+		await fmt.println(`Done!`);
 		await fmt.println();
 
 	}).catch(ex => {

@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {ncp} from 'ncp';
 import * as constants from './constants';
-import * as utils from '../utils';
 import {GivenSiteOptions} from './prompt-user';
 
 // Normalize a given path to remove any redundant components using path.join().
@@ -19,7 +18,19 @@ export const isFileExist = (file): fs.Stats => {
 	}
 };
 
-export const mkdirIfNotExists = utils.mkdirIfNotExists;
+export const makeNotExistedDir = (dir) => {
+	try {
+		const stats = fs.statSync(dir);
+		if (stats) {return new Error('The target file exists but is not a directory.');}
+	} catch (ex) {
+		try {
+			fs.mkdirSync(dir);
+		} catch (ex) {
+			return ex;
+		}
+	}
+	return null;
+};
 
 const escapeSingleQuote = (value = '') => value.replace(/'/g, '\\\'');
 
