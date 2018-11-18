@@ -64,6 +64,7 @@ class GenerateMdSite extends Command {
 		`$ ${command} --test .              # test configs without building site.`,
 		`$ ${command} --print .             # print the resolved site structure.`,
 		`$ ${command} --no-writing .        # build markdown site without writing to disk.`,
+		`$ ${command} --no-cache .          # build markdown site without cache( of static assets).`,
 
 		``,
 		`$ ${command} --version             # print the version of the markdown site generator.`,
@@ -106,6 +107,7 @@ class GenerateMdSite extends Command {
 		const isTestingConfigs = flags.test;
 		const isPrinting = flags.print;
 		const noWriting = flags['no-writing'];
+		const noCache = flags['no-cache'];
 
 		const isSilent = flags.silent;
 		const isVerbose = flags.verbose;
@@ -193,6 +195,7 @@ class GenerateMdSite extends Command {
 		if (noWriting) {app.noWriting = true;}
 		if (isSilent) {app.isSilent = true;}
 		if (isVerbose) {app.isVerbose = true;}
+		if (noCache) {app.noCache = noCache;}
 
 		app.statAndRender();
 	}
