@@ -2,6 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import {ncp} from 'ncp';
 import * as constants from './constants';
 import * as utils from '../utils';
 import {GivenSiteOptions} from './prompt-user';
@@ -33,3 +34,17 @@ export const renderSiteConfigsIndexJs = (options: GivenSiteOptions) => {
 	};
 	return constants.renderSiteConfigsIndexJsByTemplate(site);
 };
+
+// Copy folders.
+export const copyFolder = async (source, destination, options = constants.NCP_DEFAULT_OPTIONS) => new Promise((resolve, reject) => {
+	ncp(source, destination, options, (err) => {
+		if (err) {return reject(err);}
+		resolve();
+	});
+});
+
+export const copyDemoMarkdownSite = async (targetSiteDirLocation) =>
+	copyFolder(constants.DEMO_MARKDOWN_SITE_DIR_LOCATION, targetSiteDirLocation);
+
+export const copySiteConfigsThemeGithub = async (targetConfigsDirLocation) =>
+	copyFolder(constants.SITE_CONFIGS_THEME_GITHUB_DIR_LOCATION, path.join(targetConfigsDirLocation, constants.THEME_GITHUB_DIR));
