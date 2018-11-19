@@ -7,7 +7,7 @@ import * as logger from './logger';
 const MODULE_SITE_CONFIGS = constants.MODULE_SITE_CONFIGS;
 
 // Emphasize the user-input file and folder.
-const emTarget = (dir) => `"${dir}"`;
+const emTarget = (dir) => `${logger.STYLE_BOLD}"${dir}"${logger.STYLE_RESET_BOLD}`;
 
 // Error an specified error.
 // helpError for an specified error.
@@ -18,7 +18,7 @@ export const getGenerateMdSiteErrors = (targetSiteDir, targetSiteDirLocation, ta
 
 	targetSiteDirIsNotFolderError: `The target folder resolved ${emTarget(targetSiteDirLocation)} is not a folder.`,
 
-	targetSiteConfigsDirExistedError: `Found existed folder of the site configs ${targetConfigsDir} from the given target dir.`,
+	targetSiteConfigsDirExistedError: `Found existed folder of the site configs ${emTarget(targetConfigsDir)} from the given target dir.`,
 	targetSiteConfigsDirExistedHelp: `Remove the folder ${emTarget(targetConfigsDir)} first before initializing site.`,
 
 	nonEmptySiteConfigsResolvedError: `Non-empty configures resolved ${emTarget(resolvedTargetConfigsDirLocation)} from ${emTarget(targetSiteDir)}.`,
