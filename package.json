@@ -31,8 +31,11 @@
   },
   "files": [
     "bin",
+    "blogs",
     "built",
+    "configs",
     "src",
+    "tests",
     "tsconfig.json",
     "README.md"
   ],
