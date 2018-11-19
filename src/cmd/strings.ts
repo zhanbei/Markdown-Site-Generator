@@ -1,6 +1,10 @@
 'use strict';
 
-import {MODULE_SITE_CONFIGS} from './constants';
+import * as path from 'path';
+import * as constants from './constants';
+import * as logger from './logger';
+
+const MODULE_SITE_CONFIGS = constants.MODULE_SITE_CONFIGS;
 
 // Error an specified error.
 // helpError for an specified error.
@@ -23,5 +27,30 @@ export const getGenerateMdSiteErrors = (targetSiteDir, targetSiteDirLocation, ta
 
 export const getGenerateMdSiteNotices = (targetSiteDir, targetSiteDirLocation, targetConfigsDir, resolvedTargetConfigsDirLocation) => ({
 	noticeSiteConfigsResolvedOkay: `The configures resolved "${resolvedTargetConfigsDirLocation}" from "${targetSiteDir}" is ok.`,
+});
+
+// const givenTargetConfigsIndexJs = ;
+export const getSiteInitializationNotices = (targetSiteDir, targetSiteDirLocation, targetConfigsDir) => ({
+	noticeTaskInitializingExistedMdSite: `You are ${logger.FG_INFO}initialize an *existed* markdown site${logger.FG_RESET} "${targetSiteDirLocation}" with prompts and the default templates.`,
+	noticeTaskCreatingNewMdDemoSite: `You are ${logger.FG_INFO}creating a *new* markdown demo site${logger.FG_RESET} to "${targetSiteDirLocation}" with prompts and the default templates.`,
+
+	noticeSiteInitializingWithPrompt: 'Now we will assist you with the process.',
+
+	noticeAbortingCauseInvalidOptions: 'Aborting, cause received invalid options...',
+	noticeAwesomeCauseValidOptions: 'Awesome!',
+
+	// The same as initializing existed md site.
+	noticeWillGenerateSiteConfigsToExistedSite: `Will generate configs to the existed site: "${targetSiteDirLocation}" with the default templates.`,
+	noticeWillCreateNewMdDemoSite: `Will create a *new* markdown demo site to "${targetSiteDirLocation}" with the default templates.`,
+
+	noticeCopiedMdDemoSite: `Copied a markdown demo site to "${targetSiteDir}" for you.`,
+
+	noticeCreatedSiteConfigsDir: `Created folder for site configures: "${targetConfigsDir}".`,
+
+	noticeGeneratedSiteConfigsEntrance: `Generated configures file: "${path.join(targetConfigsDir, constants.INDEX_DOT_JS)}".`,
+
+	noticeAddSiteConfigsToVcs: `You may add the site configures(${targetConfigsDir}) to Git(or other VCS) to track changes.`,
+
+	noticeDoneSiteInitializing: `Done!`,
 });
 
