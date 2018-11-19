@@ -9,12 +9,10 @@ const MODULE_SITE_CONFIGS = constants.MODULE_SITE_CONFIGS;
 // Emphasize the user-input file and folder.
 const emTarget = (dir) => `${logger.STYLE_BOLD}"${dir}"${logger.STYLE_RESET_BOLD}`;
 
-// Error an specified error.
-// helpError for an specified error.
-// Help, notice, hint, .
 export const getGenerateMdSiteErrors = (targetSiteDir, targetSiteDirLocation, targetConfigsDir, resolvedTargetConfigsDirLocation) => ({
 	noSiteConfigsModulesFoundError: `No \`${emTarget(MODULE_SITE_CONFIGS)}\` module found in the target dir or the target dir ${emTarget(targetSiteDir)} is not a node module.`,
-	noSiteConfigsModulesFoundHelp: `You may add a config file named \`index.js\`, \`index.json\`, \`${MODULE_SITE_CONFIGS}.js\`, \`${MODULE_SITE_CONFIGS}.json\`, \`${MODULE_SITE_CONFIGS}/index.js\`, or \`${MODULE_SITE_CONFIGS}/index.json\` to the target dir.`,
+	// noSiteConfigsModulesFoundHelp: `You may add a config file named \`index.js\`, \`index.json\`, \`${MODULE_SITE_CONFIGS}.js\`, \`${MODULE_SITE_CONFIGS}.json\`, \`${MODULE_SITE_CONFIGS}/index.js\`, or \`${MODULE_SITE_CONFIGS}/index.json\` to the target dir.`,
+	noSiteConfigsModulesFoundHelp: `You may use \`generate-md-site --init ${emTarget(targetSiteDir)}\` to initialize a new/existed markdown site; @see --help for more.`,
 
 	targetSiteDirIsNotFolderError: `The target folder resolved ${emTarget(targetSiteDirLocation)} is not a folder.`,
 
@@ -37,7 +35,6 @@ const info = (msg) => logger.FG_INFO + msg + logger.FG_RESET;
 // Highlight the targeted user-input file and dir.
 const hlTarget = (dir) => `${logger.FG_INFO}"${dir}"${logger.FG_RESET}`;
 
-// const givenTargetConfigsIndexJs = ;
 export const getSiteInitializationNotices = (targetSiteDir, targetSiteDirLocation, targetConfigsDir) => ({
 	noticeTaskInitializingExistedMdSite: `You are ${info('initialize an *existed* markdown site')} ${hlTarget(targetSiteDirLocation)} with prompts and the default templates.`,
 	noticeTaskCreatingNewMdDemoSite: `You are ${info('creating a *new* markdown demo site')} to ${hlTarget(targetSiteDirLocation)} with prompts and the default templates.`,
