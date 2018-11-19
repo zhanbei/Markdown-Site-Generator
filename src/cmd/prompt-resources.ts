@@ -55,15 +55,15 @@ export const modeSelector = {
 	},
 	choices: [{
 		name: 'Dot HTML Mode',
-		// message: '-- Dot HTML Mode',
+		message: 'Dot HTML Mode (render to "test-post.html")',
 		value: MODE_DOT_HTML,
 	}, {
 		name: 'Trailing Slash Mode',
-		// message: '-- Trailing Slash Mode',
+		message: 'Trailing Slash Mode (render to "test-post/index.html")',
 		value: MODE_TRAILING_SLASH,
 	}, {
 		name: 'No Trailing Slash Mode',
-		// message: '-- No Trailing Slash Mode',
+		message: 'No Trailing Slash Mode (render to "test-post/test-post.html")',
 		value: MODE_NO_TRAILING_SLASH,
 	}],
 };

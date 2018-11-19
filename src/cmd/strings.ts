@@ -75,7 +75,14 @@ export const promptMessages = {
 		'Output(Generated Site) Folder:',
 
 	hintSiteMode:
+		logger.STYLE_BOLD + // set to the origin style as bold.
 		'There are three modes supported by the Markdown Site Generator.\n' +
-		'Which mode to build your site:\n' +
-		'Choose MODE:',
+		'\n' +
+		logger.STYLE_RESET_BOLD + // set to normal.
+		`    Sites built in the ${info('dot-html')} and ${info('trailing-slash')} modes can be hosted by normal static servers;\n` +
+		`    while built in the ${info('no-trailing-slash')} mode must be hosted by customized servers.\n` +
+		'    Check out https://github.com/zhanbei/Markdown-Site-Generator for the detail.\n' +
+		logger.STYLE_BOLD + // recover to the original style: bold.
+		'\n' +
+		'Choose MODE to build your site:',
 };
