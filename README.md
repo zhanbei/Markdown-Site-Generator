@@ -11,22 +11,26 @@ A markdown site generator which generates static sites, supporting the *no-trail
 
 ## Installation
 
-Currently you can clone this repository and run `npm install . --global` inside the root folder.
+Install via `npm` globally:
 
 ```bash
-git clone https://github.com/zhanbei/Markdown-Site-Generator
+sudo npm install markdown-site-generator --global
+```
 
-cd Markdown-Site-Generator
+Install to your local markdown site locally:
 
-sudo npm install -g .
+```bash
+npm install markdown-site-generator --save-dev
 ```
 
 After installation, you will get the `generate-md-site` command available.
 
 ## Get Started
 
-Run the `generate-md-site My-Blogs` to generate a markdown site for test,
+Run the `generate-md-site --init My-Blogs` to generate a markdown site for test,
 and you will follow the built-in instructions to get started.
+
+Run the `generate-md-site My-Blogs` to build your markdown site(, and then you may host the generated site).
 
 ## Usage
 
