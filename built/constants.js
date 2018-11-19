@@ -1,0 +1,10 @@
+'use strict';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SLASH = '/';
+exports.TAB = '\t';
+exports.README = 'readme';
+exports.INDEX = 'index';
+exports.DOT = '.';
+exports.DOT_HTML = '.html';
+exports.INDEX_DOT_HTML = exports.INDEX + exports.DOT_HTML;
+exports.DEFAULT_ASSETS_DIR_NAME = 'assets';
