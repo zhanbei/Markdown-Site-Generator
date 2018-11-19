@@ -33,7 +33,7 @@ const promptAndInitializeSite = async (
 	await fmt.println(notices.noticeSiteInitializingWithPrompt, time * 2);
 	await fmt.println('', time * 3);
 
-	promptForSiteOptions(targetSiteDir).then(async (options: GivenSiteOptions) => {
+	promptForSiteOptions(targetSiteDir, targetSiteDirLocation).then(async (options: GivenSiteOptions) => {
 
 		// Received user-given options.
 		await fmt.println('', time * 2);

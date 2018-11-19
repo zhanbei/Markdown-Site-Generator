@@ -17,11 +17,11 @@ export const isGivenSiteOptionsValid = (options: GivenSiteOptions) => {
 	return options.title && options.inputDir && options.outputDir && resources.MODES.includes(options.mode);
 };
 
-export const promptForSiteOptions = (givenTargetDir): Promise<GivenSiteOptions> => {
+export const promptForSiteOptions = (givenTargetDir, givenTargetDirLocation): Promise<GivenSiteOptions> => {
 	return enquirer.prompt([
 		resources.textTitle,
-		resources.textInputDir(givenTargetDir),
-		resources.textOutputDir(givenTargetDir),
+		resources.textInputDir(givenTargetDirLocation),
+		resources.textOutputDir(givenTargetDirLocation),
 		resources.modeSelector,
 	]).then((options: GivenSiteOptions) => {
 		options.inputDir = options.inputDir || '.';

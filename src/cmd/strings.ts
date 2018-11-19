@@ -35,7 +35,7 @@ export const getGenerateMdSiteNotices = (targetSiteDir, targetSiteDirLocation, t
 // Highlight messages as info.
 const info = (msg) => logger.FG_INFO + msg + logger.FG_RESET;
 // Highlight the targeted user-input file and dir.
-const hlTarget = (dir) => `"${logger.FG_INFO}${dir}${logger.FG_RESET}"`;
+const hlTarget = (dir) => `${logger.FG_INFO}"${dir}"${logger.FG_RESET}`;
 
 // const givenTargetConfigsIndexJs = ;
 export const getSiteInitializationNotices = (targetSiteDir, targetSiteDirLocation, targetConfigsDir) => ({
@@ -62,3 +62,20 @@ export const getSiteInitializationNotices = (targetSiteDir, targetSiteDirLocatio
 	noticeDoneSiteInitializing: `Done!`,
 });
 
+export const promptMessages = {
+	hintSiteTitle: 'The title of your site:',
+
+	getInputDirHint: (givenTargetDirLocation) =>
+		`The entrance/root folder of your markdown site, relative to the given target dir ${hlTarget(givenTargetDirLocation)}.\n` +
+		`Input(Markdown Site) Folder:`,
+
+	getOutputDirHint: (givenTargetDirLocation) =>
+		`The entrance/root folder of your markdown site is set to ${hlTarget(givenTargetDirLocation)}.\n` +
+		`Now set the the output folder for the generated site, relative to the given target dir ${hlTarget(givenTargetDirLocation)}.\n` +
+		'Output(Generated Site) Folder:',
+
+	hintSiteMode:
+		'There are three modes supported by the Markdown Site Generator.\n' +
+		'Which mode to build your site:\n' +
+		'Choose MODE:',
+};
