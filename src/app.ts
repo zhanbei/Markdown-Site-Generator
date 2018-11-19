@@ -173,7 +173,7 @@ export class App {
 		this.logRareNodes('Found and ignored %d HTML files:', this.counterHtmlFiles);
 		this.logRareNodes('Found and will copy %d regular files:', this.counterRegularFiles);
 
-		this.logRareNodes('Found and will render %d markdown documents:', this.counterMarkdownFiles);
+		console.log('Found and will render %d markdown documents:', this.counterMarkdownFiles.length);
 		this.logRareNodes('Found %d files in the format of ".../test-folder/test-file.md":', this.counterTestFolderTestFileFiles);
 		this.logRareNodes('Found %d files in the format of ".../test-file/index.md":', this.counterTestFileIndexFiles);
 		this.logRareNodes('Found %d files in the format of ".../test-file/test-file.md":', this.counterTestFileTestFileFiles);
