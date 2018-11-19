@@ -6,13 +6,8 @@ A markdown site generator which generates static sites, supporting the *no-trail
 
 ## TO DO
 
-- [ ] Copy static assets to generated site with cache.
-- [ ] Generate default configs on initialize.
-- [ ] Update documents of usage of configs.
-- [ ] Fix the conflict between HTML base and anchor.
 - [ ] Parse markdown document metadata.
 - [ ] Parse folder/index.json metadata.
-- [ ] Fix non-character anchors.
 
 ## Installation
 
@@ -26,51 +21,114 @@ cd Markdown-Site-Generator
 sudo npm install -g .
 ```
 
+After installation, you will get the `generate-md-site` command available.
+
 ## Get Started
 
-You may check out the [instructions to start a brand new blog site](https://github.com/zhanbei/.markdown-site-configs#start-a-brand-new-blog) with the [github flavored markdown](https://github.github.com/gfm/) supported.
+Run the `generate-md-site My-Blogs` to generate a markdown site for test,
+and you will follow the built-in instructions to get started.
 
 ## Usage
 
-After installation, you will get a `generate-md-site` command available. Create a file `.site_configs/index.js` in your markdown-based site and export an object to configure the site generator. Then you can run `generate-md-site .` to generate your  website.
+Run the `generate-md-site --help` to get available options and usage examples like shown following:
 
-```bash
-generate-md-site .
+```text
+fisher@zb ~/workspace $ generate-md-site
+
+ ›   Please specify the target dir for your markdown site.
+
+A markdown site generator which generates static sites, supporting the *no-trailing-slash* mode, and can be used to generate blog sites.
+
+USAGE
+  $ generate-md-site [TARGET-DIR]
+
+ARGUMENTS
+  TARGET-DIR  the site/configs entrance to be resolved and parsed.
+
+OPTIONS
+  -h, --help        print the usage document for help.
+  -i, --init        initialize a new or an existed markdown site with prompts and the default configures.
+  -n, --no-writing  build markdown site without writing to disk.
+  -p, --print       print out the resolved structure of your markdown site without building.
+  -s, --silent      use the silent mode, with no output.
+  -t, --test        test your configs and stat out the structure of your markdown site without building.
+  -v, --version     print the version information.
+  -x, --verbose     use the verbose mode, with rich output.
+
+DESCRIPTION
+  The *Markdown Site Generator* supports sites in the following three different modes:
+
+  1. The     **Dot  HTML**     Mode:  In this mode, every markdown file is rendered directly to the corresponding HTML file.
+  2. The  **Trailing  Slash**  Mode:  This mode abandons the ending *.html* and appends a trailing slash to the URL.
+  3. The **No Trailing Slash** Mode:  Site generated and hosted in the *no-trailing-slash* mode has no trailing slash in the URL.
+
+EXAMPLES
+
+  $ generate-md-site .                     # build your markdown site and generate a static site.
+
+  $ generate-md-site --init .              # initialize an existed markdown site with prompts and the default configures.
+  $ generate-md-site --init <site-name>    # create a new markdown demo site with prompts and the default configures.
+  $ generate-md-site --test .              # test configs without building site.
+  $ generate-md-site --print .             # print the resolved site structure.
+  $ generate-md-site --no-writing .        # build markdown site without writing to disk.
+  $ generate-md-site --no-cache .          # build markdown site without cache( of static assets).
+
+  $ generate-md-site --version             # print the version of the markdown site generator.
+  $ generate-md-site --help                # print the help document of the markdown site generator.
 ```
 
 ## Configuration
 
-In your configuration file,
+The site configs may consist of the following fields:
 
-- `inputDir` [`required`]
+> The mark "`- [x]`" stands for required field while "`- [ ]`" stands for optional field.
+
+- [x] `title`
+	- The site title.
+- [x] `inputDir`
 	- The root dir of your markdown site.
-- `outputDir` [`required`]
+- [x] `outputDir`
 	- The root dir of the generated site.
-- `mdPageTemplate` [`required`]
+- [x] `mdPageTemplate`
 	- The template(using the [ejs](http://ejs.co/) engine) for the rendered markdown document.
 
-Here is a demo of configuration.
+Here is a [demo of configuration](.site_configs/index.js):
 
 ```js
 // .site_configs/index.js
-const path = require('path');
+'use strict';
 
-module.exports = {
-	title: "My Site",
+const path = require('path');
+// The selected configs of selected theme(github), which take cares of used templates and selected mode.
+// Merge it into the site configs to make it work.
+const configures = require('./github/no-trailing-slash-templates/configs');
+
+// The default configs for the markdown site.
+module.exports = Object.assign({
+	title: 'My Awesome Blogs',
+
 	inputDir: path.resolve(__dirname, '..'),
 	outputDir: path.resolve(__dirname, '../.site'),
-	mdPageTemplate: path.resolve(__dirname, 'github/no-trailing-slash-templates/page.ejs'),
-	mdPageTemplateName: 'page.ejs',
-	mdListTemplate: path.resolve(__dirname, 'github/no-trailing-slash-templates/list.ejs'),
-	mdListTemplateName: 'list.ejs',
-	assetsDir: path.resolve(__dirname, 'github/assets'),
+
 	// Filter out some files or folders.
-	nameFilters: [(name) => name.startsWith('_reserve'), (name) => name === 'backups'],
+	nameFilters: [
+		(name) => name.startsWith('_reserve'),
+		(name) => ['backups', 'README.md', 'Drafts', 'logs'].includes(name),
+	],
 	nameConverter: (name) => name.toLowerCase(),
-	// Whether to generate site in the no-trailing-slash mode.
-	noTrailingSlash: true,
-	folderIndexConversion: true,
-};
+
+	// Generate site in the dot-html mode, if true, and !trailingSlash and !noTrailingSlash.
+	dotHTML: true,
+	// Generate site in the trailing-slash mode, if true and !noTrailingSlash.
+	trailingSlash: false,
+	// Generate site in the no-trailing-slash mode, if true.
+	noTrailingSlash: false,
+
+	// The default configures used, which will be override by selected templates and mode.
+	assetsDir: path.resolve(__dirname, 'not-existed/assets'),
+	mdPageTemplate: path.resolve(__dirname, 'not-existed/templates/page.ejs'),
+	mdListTemplate: path.resolve(__dirname, 'not-existed/templates/list.ejs'),
+}, configures);
 ```
 
 ## Modes of the Markdown Site Generator
