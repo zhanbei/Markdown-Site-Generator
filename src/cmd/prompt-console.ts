@@ -4,7 +4,7 @@ export const TIME_WAIT_SAY = 500;
 export const LOADING_DOTS = ['.', '.', '.', ' ', '.', '.', '.'];
 
 // Print something with delay and no trailing newline.
-export const print = async (something = '', milliseconds = TIME_WAIT_SAY / 4 * 3) => new Promise(resolve => {
+export const print = async (something = '', milliseconds = TIME_WAIT_SAY / 2) => new Promise(resolve => {
 	setTimeout(() => {
 		something ? process.stdout.write(something) : undefined;
 		resolve();

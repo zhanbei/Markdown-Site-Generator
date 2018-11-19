@@ -1,6 +1,11 @@
 'use strict';
 
+// @see https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 export const FG_RESET = '\x1b[0m';
+
+export const STYLE_BOLD = '\x1b[1m';
+export const STYLE_RESET_BOLD = '\x1b[22m'; // Neither bold nor faint
+
 export const FG_RED = '\x1b[31m';
 export const FG_GREEN = '\x1b[32m';
 export const FG_YELLOW = '\x1b[33m';
@@ -9,7 +14,8 @@ export const FG_YELLOW = '\x1b[33m';
 export const FG_INFO = FG_GREEN;
 export const FG_WARN = FG_YELLOW;
 export const FG_ERROR = FG_RED;
-export const PREFIX_SPACES = ' '.repeat(4);
+// Referred the command#error from #oclif.
+export const PREFIX_SPACES = ' ›   ';
 
 export const log = (...messages) => {
 	console.log(...messages);

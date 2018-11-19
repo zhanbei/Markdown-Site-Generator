@@ -4,11 +4,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {Command} from '@oclif/command';
 import * as constants from './constants';
-import * as logger from './logger';
 import * as utils from './utils';
 // The delayed console; currently named like *fmt* in golang. :(
 import * as fmt from './prompt-console';
 import promptForSiteOptions, {GivenSiteOptions, isGivenSiteOptionsValid} from './prompt-user';
+import {getSiteInitializationNotices} from './strings';
 
 const time = fmt.TIME_WAIT_SAY;
 
@@ -19,39 +19,41 @@ const promptAndInitializeSite = async (
 	targetConfigsDir, targetConfigsDirLocation,
 ) => new Promise(async resolve => {
 
+	const notices = getSiteInitializationNotices(targetSiteDir, targetSiteDirLocation, targetConfigsDir);
+
 	// Notice purpose and goals of this scripts.
 	if (isTargetSiteDirExisted) {
-		await fmt.println(`You are ${logger.FG_INFO}initialize an *existed* markdown site${logger.FG_RESET} "${targetSiteDirLocation}" with prompts and the default templates.`);
+		await fmt.println(notices.noticeTaskInitializingExistedMdSite);
 	} else {
-		await fmt.println(`You are ${logger.FG_INFO}creating a *new* markdown demo site${logger.FG_RESET} to "${targetSiteDirLocation}" with prompts and the default templates.`);
+		await fmt.println(notices.noticeTaskCreatingNewMdDemoSite);
 	}
-	await fmt.println('');
+	await fmt.println();
 
 	// Notice for coming prompts.
-	await fmt.println('Now we will assist you with the process.', time * 2);
+	await fmt.println(notices.noticeSiteInitializingWithPrompt, time * 2);
 	await fmt.println('', time * 3);
 
-	promptForSiteOptions(targetSiteDir).then(async (options: GivenSiteOptions) => {
+	promptForSiteOptions(targetSiteDir, targetSiteDirLocation).then(async (options: GivenSiteOptions) => {
 
 		// Received user-given options.
 		await fmt.println('', time * 2);
 
 		if (!isGivenSiteOptionsValid(options)) {
 			// await utils.println('');
-			await fmt.println('Aborting, cause received invalid options...');
+			await fmt.println(notices.noticeAbortingCauseInvalidOptions);
 			resolve();
 			return;
 		}
 
 		// Notice for accepted user-given options.
-		await fmt.println('Awesome!');
+		await fmt.println(notices.noticeAwesomeCauseValidOptions);
 		await fmt.println();
 
 		// Confirm to proceeding.
 		if (isTargetSiteDirExisted) {
-			await fmt.println(`Will generate configs to the existed site: "${targetSiteDirLocation}" with the default templates.`, time * 2);
+			await fmt.println(notices.noticeWillGenerateSiteConfigsToExistedSite, time * 2);
 		} else {
-			await fmt.println(`Will create a *new* markdown demo site to "${targetSiteDirLocation}" with the default templates.`, time * 2);
+			await fmt.println(notices.noticeWillCreateNewMdDemoSite, time * 2);
 		}
 		await fmt.println();
 
@@ -64,7 +66,7 @@ const promptAndInitializeSite = async (
 			// Copy blogs files of the sample site.
 			// await fmt.println(`Will create a demo markdown site to "${targetSiteDir}" for you.`, time * 2);
 			await utils.copyDemoMarkdownSite(targetSiteDirLocation);
-			await fmt.println(`Copied a demo markdown site to "${targetSiteDir}" for you.`, time * 2);
+			await fmt.println(notices.noticeCopiedMdDemoSite, time * 2);
 			await fmt.println();
 		}
 
@@ -76,14 +78,13 @@ const promptAndInitializeSite = async (
 			resolve();
 			return;
 		}
-		await fmt.println(`Created folder for site configures: "${targetConfigsDir}".`);
+		await fmt.println(notices.noticeCreatedSiteConfigsDir);
 		await fmt.println();
 
 		// Generate configures.
-		const givenTargetConfigsIndexJs = path.join(targetConfigsDir, constants.INDEX_DOT_JS);
 		const givenTargetConfigsIndexJsLocation = path.join(targetConfigsDirLocation, constants.INDEX_DOT_JS);
 		fs.writeFileSync(givenTargetConfigsIndexJsLocation, utils.renderSiteConfigsIndexJs(options));
-		await fmt.println(`Generated configures file: "${givenTargetConfigsIndexJs}".`);
+		await fmt.println(notices.noticeGeneratedSiteConfigsEntrance);
 		await fmt.println();
 
 		// Copy github theme(modes and templates).
@@ -91,11 +92,11 @@ const promptAndInitializeSite = async (
 		await utils.copySiteConfigsThemeGithub(targetConfigsDirLocation);
 
 		// Notice to use VCS.
-		await fmt.println(`You may add the site configures(${targetConfigsDir}) to Git(or other VCS) to track changes.`);
+		await fmt.println(notices.noticeAddSiteConfigsToVcs);
 		await fmt.println();
 
 		// Done all initializations.
-		await fmt.println(`Done!`);
+		await fmt.println(notices.noticeDoneSiteInitializing);
 		await fmt.println();
 
 	}).catch(ex => {

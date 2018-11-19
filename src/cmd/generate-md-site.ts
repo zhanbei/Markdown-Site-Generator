@@ -7,6 +7,7 @@ import * as logger from './logger';
 import * as utils from './utils';
 import App from '../app';
 import promptAndInitializeSite from './initialize-site';
+import {getGenerateMdSiteErrors, getGenerateMdSiteNotices} from './strings';
 
 const _package = require('../../package.json');
 const command = _package.oclif.bin;
@@ -115,6 +116,8 @@ class GenerateMdSite extends Command {
 		const argTargetSiteDir = args[ARGS_TARGET_DIR];
 		if (!argTargetSiteDir || !argTargetSiteDir.trim()) {
 			logger.error('Please specify the target dir for your markdown site.');
+			logger.log();
+			this._help();
 			// Missing required arguments.
 			this.exit(1);
 			return;
@@ -137,10 +140,13 @@ class GenerateMdSite extends Command {
 			} catch (e) {}
 		}
 
+		const errors = getGenerateMdSiteErrors(targetSiteDir, targetSiteDirLocation, targetConfigsDir, resolvedTargetConfigsDirLocation);
+		const notices = getGenerateMdSiteNotices(targetSiteDir, targetSiteDirLocation, targetConfigsDir, resolvedTargetConfigsDirLocation);
+
 		if (!configs) {
 			if (!isInitializing) {
-				logger.error(`No \`${MODULE_SITE_CONFIGS}\` module found in the target dir or the target dir ${targetSiteDir} is not a node module.`);
-				logger.error(`You may add a config file named \`index.js\`, \`index.json\`, \`${MODULE_SITE_CONFIGS}.js\`, \`${MODULE_SITE_CONFIGS}.json\`, \`${MODULE_SITE_CONFIGS}/index.js\`, or \`${MODULE_SITE_CONFIGS}/index.json\` to the target dir.`);
+				logger.error(errors.noSiteConfigsModulesFoundError);
+				logger.error(errors.noSiteConfigsModulesFoundHelp);
 				// Missing configures from given target directory.
 				this.exit(1);
 				return;
@@ -150,14 +156,14 @@ class GenerateMdSite extends Command {
 			const stat = utils.isFileExist(targetSiteDirLocation);
 			if (stat && !stat.isDirectory()) {
 				// Abort if #givenTargetSiteDir exist and is not a folder.
-				logger.error(`The target folder resolved "${targetSiteDirLocation}" is not a folder.`);
+				logger.error(errors.targetSiteDirIsNotFolderError);
 				this.exit(1);
 				return;
 			}
 			if (stat && utils.isFileExist(targetConfigsDirLocation)) {
 				// Abort if #givenTargetSiteDir/.site_configs exist.
-				logger.error(`Found existed folder of the site configs "${targetConfigsDir}" from the given target dir.`);
-				logger.error(`Remove the folder "${targetConfigsDir}" first before initializing site. `);
+				logger.error(errors.targetSiteConfigsDirExistedError);
+				logger.error(errors.targetSiteConfigsDirExistedHelp);
 				this.exit(1);
 				return;
 			}
@@ -166,24 +172,24 @@ class GenerateMdSite extends Command {
 		}
 
 		if (isInitializing) {
-			logger.error(`Non-empty configures resolved "${resolvedTargetConfigsDirLocation}" from "${targetSiteDir}".`);
-			logger.error(`Cannot initialize site with valid configures; expected empty configures.`);
+			logger.error(errors.nonEmptySiteConfigsResolvedError);
+			logger.error(errors.nonEmptySiteConfigsResolvedHelp);
 			// Try initializing existed configures.
 			this.exit(1);
 			return;
 		}
 
 		if (!configs.title || !configs.inputDir || !configs.outputDir || !configs.mdPageTemplate) {
-			logger.error('Invalid configs resolved:', configs);
-			logger.error('You may check out https://github.com/zhanbei/Markdown-Site-Generator for help!');
+			logger.error(errors.invalidSiteConfigsResolvedError, configs);
+			logger.error(errors.invalidSiteConfigsResolvedHelp);
 			// Invalid configures.
 			this.exit(1);
 			return;
 		}
 
 		if (isTestingConfigs || configs.test) {
-			console.log(`The configures resolved "${resolvedTargetConfigsDirLocation}" from "${targetSiteDir}" is ok.`);
-			console.log();
+			logger.log(notices.noticeSiteConfigsResolvedOkay);
+			logger.log();
 		}
 
 		const app = new App(configs);
