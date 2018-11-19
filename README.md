@@ -75,18 +75,18 @@ module.exports = {
 
 ## Modes of the Markdown Site Generator
 
-- **The Default Mode**:
-By default, every markdown file is rendered directly to the corresponding HTML file.
-- **Trailing Slash Mode(No Ending Dot HTML)**:
-This mode abandons the ending *.html* and prefers a trailing slash in the URL.
-- **No Trailing Slash Mode**:
-In this mode, site generated and hosted in the *no trailing slash* has no trailing slash in the URL.
+- **The Dot HTML Mode**:
+In this mode, every markdown file is rendered directly to the corresponding HTML file.
+- **The Trailing Slash Mode**:
+This mode abandons the ending *.html* and appends a trailing slash to the URL.
+- **The No Trailing Slash Mode**:
+Site generated and hosted in the *no-trailing-slash* mode has no trailing slash in the URL.
 
 ## (Blog) Site Structure
 
 The site structure of your original content and the generated.
 
-- (Markdown) **Demo Site**
+- **A Demo Markdown Site**
 	- Index.md
 	- README.md
 	- Test-File.md
@@ -96,7 +96,7 @@ The site structure of your original content and the generated.
 		- Test-Folder.md
 		- Test-File.md
 		- Test-File.any
-- Rendering by **Default** and Host Normally
+- Rendering in the **Dot HTML Mode** and Host Normally
 	- index.html `/`
 	- readme.html `/readme.html`
 	- test-file.html `/test-file.html`

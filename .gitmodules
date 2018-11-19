@@ -1,0 +1,3 @@
+[submodule ".site_configs"]
+	path = .site_configs
+	url = https://github.com/zhanbei/.markdown-site-configs

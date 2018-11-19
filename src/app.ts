@@ -2,10 +2,12 @@
 
 import fs = require('fs');
 import path = require('path');
+import constants = require('./constants');
 import renderer = require('./renderer');
 import FsNode from './fs-node';
 import FolderNode from './folder-node';
-import GenerateMdSite = require('./generate-md-site');
+import GenerateMdSite = require('./cmd/generate-md-site');
+import * as cmdUtils from './cmd/utils';
 
 export class Configs {
 	public title: string;
@@ -13,12 +15,21 @@ export class Configs {
 	public outputDir: string;
 	public mdPageTemplate: string;
 	public mdListTemplate: string;
+	// The assets folder of the generated site to be copied to.
+	public assetsName: string;
 	public assetsDir: string;
 	public nameFilters: string[];
 	public nameConverter: (name: string, node: object) => string;
 	public anchorConverter: (name: string) => string;
+
+	// Add a prefix of baseUrl to absolute href.
+	public baseUrl: string;
+	// Use the relative links as the value of `node.href` in the list page, if true.
+	public useRelativeLinks: boolean;
+
 	public trailingSlash: boolean;
 	public noTrailingSlash: boolean;
+
 	// List files above folders, if true.
 	public listFilesAboveFolders: boolean;
 
@@ -26,6 +37,8 @@ export class Configs {
 	public print: boolean;
 	// Build markdown site without writing to disk.
 	public noWriting: boolean;
+	// Build markdown site without cache( of static assets).
+	public noCache: boolean;
 
 	// The verbose mode, rich output, if true.
 	public verbose: boolean;
@@ -43,12 +56,16 @@ export class App {
 
 	public title: string;
 
+	public assetsName: string;
 	public assetsDirLocation: string;
 	public inputDirLocation: string;
 	public outputDirLocation: string;
 
 	public nameFilters: string[];
 	public nameConverter: (name: string, node: object) => string;
+
+	public baseUrl: string;
+	public useRelativeLinks: boolean;
 
 	public trailingSlash: boolean = false;
 	public noTrailingSlash: boolean = false;
@@ -60,6 +77,7 @@ export class App {
 
 	public isPrinting: boolean;
 	public noWriting: boolean;
+	public noCache: boolean;
 
 	public isVerbose: boolean;
 	public isSilent: boolean;
@@ -92,16 +110,18 @@ export class App {
 		// Extract configs to app.
 		const {
 			title,
-			assetsDir, inputDir, outputDir, mdPageTemplate, mdListTemplate,
+			assetsName, assetsDir, inputDir, outputDir, mdPageTemplate, mdListTemplate,
 			nameFilters, nameConverter, anchorConverter,
+			baseUrl, useRelativeLinks,
 			trailingSlash, noTrailingSlash,
 			listFilesAboveFolders,
-			print, noWriting,
+			print, noWriting, noCache,
 			verbose, silent,
 		} = configs;
 
 		this.title = title;
 
+		this.assetsName = assetsName || constants.DEFAULT_ASSETS_DIR_NAME;
 		this.assetsDirLocation = path.resolve(assetsDir);
 		this.inputDirLocation = path.resolve(inputDir);
 		this.outputDirLocation = path.resolve(outputDir);
@@ -113,6 +133,9 @@ export class App {
 		this.nameConverter = nameConverter;
 		if (anchorConverter) {renderer.configs.anchorConverter = anchorConverter;}
 
+		this.baseUrl = baseUrl;
+		this.useRelativeLinks = useRelativeLinks;
+
 		this.trailingSlash = trailingSlash;
 		this.noTrailingSlash = noTrailingSlash;
 
@@ -120,6 +143,7 @@ export class App {
 
 		this.isPrinting = print;
 		this.noWriting = noWriting;
+		this.noCache = noCache;
 		this.isVerbose = verbose;
 		this.isSilent = silent;
 
@@ -149,7 +173,7 @@ export class App {
 		this.logRareNodes('Found and ignored %d HTML files:', this.counterHtmlFiles);
 		this.logRareNodes('Found and will copy %d regular files:', this.counterRegularFiles);
 
-		this.logRareNodes('Found and will render %d markdown files:', this.counterMarkdownFiles);
+		this.logRareNodes('Found and will render %d markdown documents:', this.counterMarkdownFiles);
 		this.logRareNodes('Found %d files in the format of ".../test-folder/test-file.md":', this.counterTestFolderTestFileFiles);
 		this.logRareNodes('Found %d files in the format of ".../test-file/index.md":', this.counterTestFileIndexFiles);
 		this.logRareNodes('Found %d files in the format of ".../test-file/test-file.md":', this.counterTestFileTestFileFiles);
@@ -179,6 +203,30 @@ export class App {
 		}
 		mdSite.render();
 		console.log();
+
+		// Wait for the .site folder be created; then copy the static assets.
+		this.copyAssets();
+	}
+
+	copyAssets() {
+		const target = path.join(this.outputDirLocation, this.assetsName);
+		if (!this.noCache && cmdUtils.isFileExist(target)) {
+			console.log('Found cached static assets and skip coping the static assets.');
+			console.log();
+			return;
+		}
+		if (this.noWriting) {
+			console.log('[FAKE] Copied static assets from configs/theme.');
+			console.log();
+		} else {
+			// Initialize static assets.
+			cmdUtils.copyFolder(this.assetsDirLocation, target).then(() => {
+				console.log('Copied static assets from configs/theme.');
+				console.log();
+			}).catch(ex => {
+				throw ex;
+			});
+		}
 	}
 }
 

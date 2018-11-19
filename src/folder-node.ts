@@ -28,26 +28,35 @@ export class FolderNode extends FsNode {
 		const stats = fs.statSync(app.inputDirLocation);
 		if (!stats.isDirectory()) {throw new Error('target dir is not a dir.');}
 
-		const entrance = new FolderNode(app, 0, stats);
+		const entrance = new FolderNode(app, 0, null, stats);
 		// Use the title as the from folder name.
 		entrance.fromFileName = app.title;
 		entrance.fromFilePath = constants.DOT;
 		entrance.fromFileLocation = app.inputDirLocation;
 		entrance.fromFolderName = null;
-		entrance.toFileName = null;
+		entrance.toFileName = '';
 		entrance.toFilePath = constants.DOT;
-		entrance.statFolder(null);
+		entrance.setHref(constants.SLASH, constants.SLASH);
+		entrance.statFolder();
 		return entrance;
 	}
 
-	constructor(app: App, depth: number, stats: fs.Stats) {
-		super(app, depth, stats);
+	constructor(app: App, depth: number, parent: FolderNode, stats: fs.Stats) {
+		super(app, depth, parent, stats);
 		this.isDirectory = true;
 		this.isFile = false;
 	}
 
-	statFolder(parent: FolderNode) {
+	statFolder() {
 		const configs = this.configs;
+		const parent = this.parent;
+
+		if (configs.noTrailingSlash) {
+			// No trailing slash to be appended to the path for folders in the no-trailing-slash mode.
+			this.setHref(this.toFileName, this.toFilePath);
+		} else {
+			this.setHref(utils.addTrailingSlash(this.toFileName), utils.addTrailingSlash(this.toFilePath));
+		}
 
 		// Initialize this folder.
 		const fileNames = fs.readdirSync(this.fromFileLocation);
@@ -62,14 +71,14 @@ export class FolderNode extends FsNode {
 		this.fileNames.map(fileName => {
 			const stats = fs.statSync(path.join(this.fromFileLocation, fileName));
 			if (stats.isDirectory()) {
-				const child = new FolderNode(configs, this.depth + 1, stats);
-				child.initNode(this, fileName);
-				child.statFolder(this);
+				const child = new FolderNode(configs, this.depth + 1, this, stats);
+				child.initNode(fileName);
+				child.statFolder();
 			} else if (stats.isFile()) {
-				new FileNode(configs, this.depth + 1, stats).statFile(this, fileName);
+				new FileNode(configs, this.depth + 1, this, stats).statFile(fileName);
 			} else {
 				// Ignoring the unknown file type.
-				console.error('Unknown file type!');
+				console.error('Ignoring the unsupported file type:', stats);
 			}
 		});
 
@@ -117,14 +126,27 @@ export class FolderNode extends FsNode {
 	}
 
 	print() {
-		if (this.files.length === 0 && this.folders.length === 0) {return;}
-		if (this.page) {
-			console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFilePath} <<-- ${this.page.fromFilePath}`);
-		} else {
-			console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFilePath}`);
-		}
+		if (this.files.length === 0 && this.folders.length === 0 && !this.page) {return;}
+		this.logCopiedFolder();
 		this.folders.map(folders => folders.print());
 		this.files.map(file => file.print());
+		this.logRenderedListPage();
+	}
+
+	logCopiedFolder() {
+		console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFilePath}`);
+	}
+
+	logRenderedListPage() {
+		if (this.page) {return this.page.render();}
+		const configs = this.configs;
+		if (!configs.mdListTemplate || (this.mdFilesNumber === 0 && this.folders.length === 0)) {return;}
+		if (configs.noTrailingSlash) {
+			const toFileName = (this.toFileName || constants.INDEX) + constants.DOT_HTML;
+			console.log(`${constants.TAB.repeat(this.depth + 1)}- /${toFileName} <<-- List Template.`);
+		} else {
+			console.log(`${constants.TAB.repeat(this.depth + 1)}- /${constants.INDEX_DOT_HTML} <<-- List Template.`);
+		}
 	}
 
 	render() {
@@ -133,7 +155,7 @@ export class FolderNode extends FsNode {
 		const output = configs.outputDirLocation;
 		const err = utils.mkdirIfNotExists(path.join(output, this.toFilePath), configs.noWriting, configs.isSilent);
 		if (err) {throw err;}
-		console.log(`${constants.TAB.repeat(this.depth)}- /${this.toFilePath}`);
+		this.logCopiedFolder();
 
 		// Render folders and files first to get titles from markdown files.
 		this.folders.map(node => node.render());
@@ -153,16 +175,15 @@ export class FolderNode extends FsNode {
 			// this.toFileName will be null for the input folder.
 			const toFileName = (this.toFileName || constants.INDEX) + constants.DOT_HTML;
 			toFolderPageLocation = path.join(output, this.toFilePath, toFileName);
-			console.log(`${constants.TAB.repeat(this.depth + 1)}- /${toFileName} <<-- List Template.`);
 		} else {
 			toFolderPageLocation = path.join(output, this.toFilePath, constants.INDEX_DOT_HTML);
-			console.log(`${constants.TAB.repeat(this.depth + 1)}- /${constants.INDEX_DOT_HTML} <<-- List Template.`);
 		}
 		this.title = this.fromFileName + ' - Collection';
 		const env = new EjsEnv(configs, this);
 		env.nodes = this.nodes;
 		if (!configs.noWriting) {fs.writeFileSync(toFolderPageLocation, ejs.render(configs.mdListTemplate, env));}
 		// console.warn('Rendered folder page using list template:', this.fromFileLocation, '-->>', toFolderPageLocation);
+		this.logRenderedListPage();
 	}
 }
 
