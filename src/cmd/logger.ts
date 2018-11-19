@@ -9,7 +9,8 @@ export const FG_YELLOW = '\x1b[33m';
 export const FG_INFO = FG_GREEN;
 export const FG_WARN = FG_YELLOW;
 export const FG_ERROR = FG_RED;
-export const PREFIX_SPACES = ' '.repeat(4);
+// Referred the command#error from #oclif.
+export const PREFIX_SPACES = ' ›   ';
 
 export const log = (...messages) => {
 	console.log(...messages);
