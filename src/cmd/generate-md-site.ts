@@ -116,6 +116,8 @@ class GenerateMdSite extends Command {
 		const argTargetSiteDir = args[ARGS_TARGET_DIR];
 		if (!argTargetSiteDir || !argTargetSiteDir.trim()) {
 			logger.error('Please specify the target dir for your markdown site.');
+			logger.log();
+			this._help();
 			// Missing required arguments.
 			this.exit(1);
 			return;
@@ -186,8 +188,8 @@ class GenerateMdSite extends Command {
 		}
 
 		if (isTestingConfigs || configs.test) {
-			console.log(notices.noticeSiteConfigsResolvedOkay);
-			console.log();
+			logger.log(notices.noticeSiteConfigsResolvedOkay);
+			logger.log();
 		}
 
 		const app = new App(configs);
